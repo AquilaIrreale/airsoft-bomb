@@ -82,18 +82,21 @@ byte dec_hms()
 unsigned long last_update = 0;
 unsigned long last_beep = 0;
 unsigned long beep_interval;
+unsigned long beep_duration;
 
 struct {
   byte h, m, s;
   unsigned long interval;
+  unsigned long duration;
 } beep_table[] = {
-  {0,  0, 10,  250},
-  {0,  0, 30,  500},
-  {0,  0, 60, 1000},
-  {0,  5,  0, 2000}
+  {0,  0, 10,  250, 200},
+  {0,  0, 30,  500, 200},
+  {0,  0, 60, 1000, 200},
+  {0,  5,  0, 2000, 200}
 };
 
 #define DEFAULT_BEEP_INTERVAL 4000
+#define DEFAULT_BEEP_DURATION 200
 
 void update_beep_interval()
 {
@@ -108,9 +111,13 @@ void update_beep_interval()
     if (s < beep_table[i].s) break;
   }
 
-  beep_interval = i < ARRSIZE(beep_table)
-                ? beep_table[i].interval
-                : DEFAULT_BEEP_INTERVAL;
+  if (i < ARRSIZE(beep_table)) {
+    beep_interval = beep_table[i].interval;
+    beep_duration = beep_table[i].duration;
+  } else {
+    beep_interval = DEFAULT_BEEP_INTERVAL;
+    beep_duration = DEFAULT_BEEP_DURATION;
+  }
 }
 
 #define INPUT_DONE      0
@@ -230,9 +237,10 @@ void setup()
 
   delay(3000);
 
-  beep_interval = 4000;
   len = 0;
   memset(input, '\0', sizeof pin);
+
+  update_beep_interval();
 
   lcd.clear();
   lcd.print(S_TIME);
@@ -276,7 +284,7 @@ void loop()
   }
 
   if (time - last_beep >= beep_interval) {
-    speaker.play(TIMER_NOTE, 200);
+    speaker.play(TIMER_NOTE, beep_duration);
     last_beep = time;
   }
 }
