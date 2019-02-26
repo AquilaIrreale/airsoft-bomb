@@ -84,7 +84,7 @@ unsigned long last_beep = 0;
 unsigned long beep_interval;
 unsigned long beep_duration;
 
-struct {
+const struct {
   byte h, m, s;
   unsigned long interval;
   unsigned long duration;
