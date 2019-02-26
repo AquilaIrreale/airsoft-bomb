@@ -107,24 +107,6 @@ void update_beep_interval()
                 : DEFAULT_BEEP_INTERVAL;
 }
 
-#define KEY_REPEAT_INTERVAL 500
-
-char get_key_debounced()
-{
-  static unsigned long last_read = 0;
-
-  unsigned long time = millis();
-  if (time - last_read >= KEY_REPEAT_INTERVAL) {
-    byte key = keypad.getKey();
-    if (key != NO_KEY) {
-      last_read = time;
-    }
-    return key;
-  } else {
-    return NO_KEY;
-  }
-}
-
 #define INPUT_DONE      0
 #define INPUT_NONE      1
 #define INPUT_STORE     2
@@ -132,7 +114,7 @@ char get_key_debounced()
 
 byte get_input(char *buf, byte size, const char *mask)
 {
-  char key = get_key_debounced();
+  char key = keypad.getKey();
 
   switch (key) {
   case NO_KEY:
