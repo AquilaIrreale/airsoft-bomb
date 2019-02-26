@@ -239,11 +239,11 @@ void print_time_input(const char *time)
 
   char buf[TIME_SIZE + 1];
   sprintf(buf, "%-2.2s:%-2.2s", time, time+2);
-  lcd.setCursor(1, TIME_SHORT_POS);
+  lcd.setCursor(TIME_SHORT_POS, 1);
   lcd.print(buf);
 
   byte l = strlen(time);
-  lcd.setCursor(1, TIME_SHORT_POS + (l >= 2 ? l+1 : l));
+  lcd.setCursor(TIME_SHORT_POS + (l >= 2 ? l+1 : l), 1);
   lcd.cursor();
 }
 
@@ -280,7 +280,7 @@ void print_pin_input(const char *buf)
 {
   lcd.noCursor();
 
-  lcd.setCursor(1, PIN_POS);
+  lcd.setCursor(PIN_POS, 1);
   byte n = lcd.print(buf);
 
   byte i = PIN_SIZE - n;
@@ -288,7 +288,7 @@ void print_pin_input(const char *buf)
       lcd.print(' ');
   }
 
-  lcd.setCursor(1, PIN_POS + n);
+  lcd.setCursor(PIN_POS + n, 1);
   lcd.cursor();
 }
 
@@ -310,15 +310,16 @@ void update_timer()
   lcd.print(S_TIME);
   lcd.println(output);
 
-  lcd.setCursor(1, PIN_POS + len);
+  lcd.setCursor(PIN_POS + len, 1);
   lcd.cursor();
 }
 
 void win()
 {
+  lcd.noCursor();
   lcd.clear();
   lcd.print(S_DEFUSED_1);
-  lcd.setCursor(1, 0);
+  lcd.setCursor(0, 1);
   lcd.print(S_DEFUSED_2);
 
   speaker.play(JINGLE_NOTE_1, 250);
@@ -337,9 +338,10 @@ void win()
 
 void gameover()
 {
+  lcd.noCursor();
   lcd.clear();
   lcd.print(S_WENT_OFF_1);
-  lcd.setCursor(1, 0);
+  lcd.setCursor(0, 1);
   lcd.print(S_WENT_OFF_2);
 
   speaker.play(TIMER_NOTE, 5000);
