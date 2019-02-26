@@ -89,6 +89,7 @@ struct {
   unsigned long interval;
   unsigned long duration;
 } beep_table[] = {
+  {0,  0,  5,  125,  90},
   {0,  0, 10,  250, 200},
   {0,  0, 30,  500, 200},
   {0,  0, 60, 1000, 200},
