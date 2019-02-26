@@ -4,6 +4,8 @@
 #include <LiquidCrystal.h>
 #include <Tone.h>
 
+#include "strings/en.h"
+
 #define ARRSIZE(a) ((sizeof a) / (sizeof a[0]))
 
 #define BAUD_RATE 9600
@@ -188,7 +190,7 @@ void setup()
 
   lcd.noCursor();
   lcd.clear();
-  lcd.print("INSERIRE TEMPO");
+  lcd.print(S_ENTER_TIMEOUT);
 
   len = 0;
   memset(buf, '\0', sizeof buf);
@@ -212,13 +214,13 @@ void setup()
   lcd.clear();
   delay(500);
 
-  lcd.print("TEMPO INSERITO:");
+  lcd.print(S_TIMEOUT_ENTERED);
   sprintf(buf, "%02hhu:%02hhu:%02hhu", h, m, s);
   lcd.setCursor(TIME_POS, 1);
   lcd.print(buf);
 
   lcd.clear();
-  lcd.print("INSERIRE CODICE");
+  lcd.print(S_ENTER_PIN);
 
   len = 0;
   memset(pin, '\0', sizeof pin);
@@ -240,7 +242,7 @@ void setup()
   lcd.clear();
   delay(500);
 
-  lcd.print("CODICE INSERITO:");
+  lcd.print(S_PIN_ENTERED);
   lcd.setCursor(PIN_POS, 1);
   lcd.print(pin);
 
@@ -326,7 +328,7 @@ void update_timer()
 
   lcd.noCursor();
   lcd.home();
-  lcd.print(" TEMPO: ");
+  lcd.print(S_TIME);
   lcd.println(output);
 
   lcd.setCursor(1, PIN_POS + len);
@@ -336,9 +338,9 @@ void update_timer()
 void win()
 {
   lcd.clear();
-  lcd.print("*    BOMBA     *");
+  lcd.print(S_DEFUSED_1);
   lcd.setCursor(1, 0);
-  lcd.print("* DISINNESCATA *");
+  lcd.print(S_DEFUSED_2);
 
   speaker.play(JINGLE_NOTE_1, 250);
   delay(250);
@@ -357,9 +359,9 @@ void win()
 void gameover()
 {
   lcd.clear();
-  lcd.print("*    BOMBA     *");
+  lcd.print(S_WENT_OFF_1);
   lcd.setCursor(1, 0);
-  lcd.print("*   ESPLOSA    *");
+  lcd.print(S_WENT_OFF_2);
 
   speaker.play(TIMER_NOTE, 5000);
   delay(10000);
