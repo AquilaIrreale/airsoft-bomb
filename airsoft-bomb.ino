@@ -22,8 +22,11 @@ Tone speaker;
 #define LCD_W 16
 #define LCD_H 2
 #define LCD_CENTER(w) ((LCD_W - (w)) / 2)
+
 #define PIN_SIZE 4
 #define PIN_POS LCD_CENTER(PIN_SIZE)
+#define TIME_SHORT_SIZE 5
+#define TIME_SHORT_POS LCD_CENTER(TIME_SHORT_SIZE)
 #define TIME_SIZE 8
 #define TIME_POS LCD_CENTER(TIME_SIZE)
 
@@ -149,7 +152,8 @@ byte get_input(char *buf, byte size, const char *mask)
 
 byte parse_hms(const char *buf)
 {
-  sscanf(buf, "%2hhu%2hhu%2hhu", &h, &m, &s);
+  sscanf(buf, "%2hhu%2hhu", &h, &m);
+  s = 0;
 }
 
 char pin[PIN_SIZE + 1];
@@ -172,7 +176,7 @@ void setup()
   print_time_input(buf);
 
   byte ret;
-  while ((ret = get_input(buf, 6, "995959"))
+  while ((ret = get_input(buf, 4, "9959"))
          || (parse_hms(buf), dec_hms())) {
     if (ret == INPUT_STORE) {
       speaker.play(INPUT_NOTE, 200);
@@ -190,8 +194,8 @@ void setup()
   delay(500);
 
   lcd.print(S_TIMEOUT_ENTERED);
-  sprintf(buf, "%02hhu:%02hhu:%02hhu", h, m, s);
-  lcd.setCursor(TIME_POS, 1);
+  sprintf(buf, "%02hhu:%02hhu", h, m);
+  lcd.setCursor(TIME_SHORT_POS, 1);
   lcd.print(buf);
 
   lcd.clear();
@@ -234,12 +238,12 @@ void print_time_input(const char *time)
   lcd.noCursor();
 
   char buf[TIME_SIZE + 1];
-  sprintf(buf, "%-2.2s:%-2.2s:%-2.2s", time, time+2, time+4);
-  lcd.setCursor(1, TIME_POS);
+  sprintf(buf, "%-2.2s:%-2.2s", time, time+2);
+  lcd.setCursor(1, TIME_SHORT_POS);
   lcd.print(buf);
 
   byte l = strlen(time);
-  lcd.setCursor(1, TIME_POS + (l >= 4 ? l+2 : l >= 2 ? l+1 : l));
+  lcd.setCursor(1, TIME_SHORT_POS + (l >= 2 ? l+1 : l));
   lcd.cursor();
 }
 
