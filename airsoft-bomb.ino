@@ -52,14 +52,10 @@ byte h, m, s;
 
 byte dec_hms()
 {
-  if (h == 0 && m == 0 && s == 0) {
-    return 1;
-  }
-
   if (s == 0) {
     if (m == 0) {
       if (h == 0) {
-        gameover();
+        return 1;
       }
 
       m = 60;
@@ -176,7 +172,6 @@ byte get_input(char *buf, byte size, const char *mask)
 byte parse_hms(const char *buf)
 {
   sscanf(buf, "%2hhu%2hhu%2hhu", &h, &m, &s);
-  return h == 0 && m == 0 && s == 0;
 }
 
 char pin[PIN_SIZE + 1];
@@ -201,8 +196,7 @@ void setup()
 
   byte ret;
   while ((ret = get_input(buf, 6, "995959"))
-         || parse_hms(buf)
-         || dec_hms()) {
+         || (parse_hms(buf), dec_hms())) {
     if (ret == INPUT_STORE) {
       speaker.play(INPUT_NOTE, 200);
       print_time_input(buf);
