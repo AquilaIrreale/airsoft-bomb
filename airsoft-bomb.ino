@@ -7,6 +7,7 @@
 #include "strings/en.h"
 
 #define ARRSIZE(a) ((sizeof a) / (sizeof a[0]))
+#define STRLEN(s) (ARRSIZE(s) - 1)
 
 #define BAUD_RATE 9600
 
@@ -24,11 +25,13 @@ Tone speaker;
 #define LCD_CENTER(w) ((LCD_W - (w)) / 2)
 
 #define PIN_SIZE 4
-#define PIN_POS LCD_CENTER(PIN_SIZE)
-#define TIME_SHORT_SIZE 5
-#define TIME_SHORT_POS LCD_CENTER(TIME_SHORT_SIZE)
 #define TIME_SIZE 8
+#define TIME_SHORT_SIZE 5
+
+#define PIN_POS LCD_CENTER(PIN_SIZE)
 #define TIME_POS LCD_CENTER(TIME_SIZE)
+#define TIME_SHORT_POS LCD_CENTER(TIME_SHORT_SIZE)
+#define TIMEOUT_POS (STRLEN(S_TIME) + 1)
 
 LiquidCrystal lcd(7, 8, 10, 11, 12, 13);
 
@@ -226,11 +229,13 @@ void setup()
   lcd.print(pin);
 
   delay(3000);
-  lcd.clear();
 
   beep_interval = 4000;
   len = 0;
   memset(input, '\0', sizeof pin);
+
+  lcd.clear();
+  lcd.print(S_TIME);
 }
 
 void print_time_input(const char *time)
@@ -306,9 +311,8 @@ void update_timer()
   Serial.println(output);
 
   lcd.noCursor();
-  lcd.home();
-  lcd.print(S_TIME);
-  lcd.println(output);
+  lcd.setCursor(TIMEOUT_POS, 0);
+  lcd.print(output);
 
   lcd.setCursor(PIN_POS + len, 1);
   lcd.cursor();
