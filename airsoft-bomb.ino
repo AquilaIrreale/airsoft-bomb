@@ -164,7 +164,13 @@ byte get_input(char *buf, byte size, const char *mask)
 byte parse_hms(const char *buf)
 {
   sscanf(buf, "%2hhu%2hhu", &h, &m);
+
+  if (h == 0 && m == 0) {
+    return 1;
+  }
+
   s = 0;
+  return 0;
 }
 
 char pin[PIN_SIZE + 1];
@@ -187,8 +193,7 @@ void setup()
   print_time_input(buf);
 
   byte ret;
-  while ((ret = get_input(buf, 4, "9959"))
-         || (parse_hms(buf), dec_hms())) {
+  while ((ret = get_input(buf, 4, "9959")) || parse_hms(buf)) {
     if (ret == INPUT_STORE) {
       speaker.play(INPUT_NOTE, 200);
       print_time_input(buf);
@@ -199,8 +204,6 @@ void setup()
 
   speaker.play(INPUT_NOTE, 1000);
   lcd.noCursor();
-  delay(500);
-
   lcd.clear();
   delay(500);
 
@@ -208,8 +211,11 @@ void setup()
   sprintf(buf, "%02hhu:%02hhu", h, m);
   lcd.setCursor(TIME_SHORT_POS, 1);
   lcd.print(buf);
+  delay(1500);
 
   lcd.clear();
+  delay(500);
+
   lcd.print(S_ENTER_PIN);
 
   len = 0;
@@ -238,10 +244,11 @@ void setup()
 
   delay(3000);
 
+  lcd.clear();
+  delay(500);
+
   len = 0;
   memset(input, '\0', sizeof pin);
-
-  update_beep_interval();
 
   lcd.clear();
   lcd.print(S_TIME);
