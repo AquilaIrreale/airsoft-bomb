@@ -4,6 +4,8 @@
 #include <LiquidCrystal.h>
 #include <Tone.h>
 
+#define ARRSIZE(a) ((sizeof a) / (sizeof a[0]))
+
 #define BAUD_RATE 9600
 
 #define SPEAKER_PIN 9
@@ -46,14 +48,6 @@ Keypad keypad(
   COLS
 );
 
-unsigned long last_update = 0;
-unsigned long last_beep = 0;
-unsigned long beep_interval;
-
-char pin[PIN_SIZE + 1];
-char input[PIN_SIZE + 1];
-byte len;
-
 byte h, m, s;
 
 byte dec_hms()
@@ -79,6 +73,48 @@ byte dec_hms()
   s--;
 
   return 0;
+}
+
+unsigned long last_update = 0;
+unsigned long last_beep = 0;
+unsigned long beep_interval;
+
+struct {
+  byte h, m, s;
+  unsigned long interval;
+} beep_table[] = {
+  {0,  0, 10,  250},
+  {0,  0, 30,  500},
+  {0,  0, 60, 1000},
+  {0,  5,  0, 2000}
+};
+
+#define DEFAULT_BEEP_INTERVAL 4000
+
+void update_beep_interval()
+{
+  byte i;
+  for (i = 0; i < ARRSIZE(beep_table); i++) {
+    if (h > beep_table[i].h) {
+      continue;
+    } else if (h < beep_table[i].h) {
+      break;
+    }
+
+    if (m > beep_table[i].m) {
+      continue;
+    } else if (m < beep_table[i].m) {
+      break;
+    }
+
+    if (s < beep_table[i].s) {
+      break;
+    }
+  }
+
+  beep_interval = i < ARRSIZE(beep_table)
+                ? beep_table[i].interval
+                : DEFAULT_BEEP_INTERVAL;
 }
 
 #define KEY_REPEAT_INTERVAL 500
@@ -142,6 +178,10 @@ byte parse_hms(const char *buf)
   sscanf(buf, "%2hhu%2hhu%2hhu", &h, &m, &s);
   return h == 0 && m == 0 && s == 0;
 }
+
+char pin[PIN_SIZE + 1];
+char input[PIN_SIZE + 1];
+byte len;
 
 void setup()
 {
@@ -283,15 +323,7 @@ void update_timer()
     gameover();
   }
 
-  if (h == 0) {
-    if (m == 0) {
-      beep_interval = s < 10 ? 250
-                    : s < 30 ? 500
-                    : 1000;
-    } else if (m < 5) {
-      beep_interval = 2000;
-    }
-  }
+  update_beep_interval();
 
   char output[9];
   sprintf(output, "%02hhu:%02hhu:%02hhu", h, m, s);
