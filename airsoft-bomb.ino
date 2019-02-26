@@ -112,6 +112,8 @@ void update_beep_interval()
 #define INPUT_STORE     2
 #define INPUT_REJECTED  3
 
+byte len;
+
 byte get_input(char *buf, byte size, const char *mask)
 {
   char key = keypad.getKey();
@@ -152,7 +154,6 @@ byte parse_hms(const char *buf)
 
 char pin[PIN_SIZE + 1];
 char input[PIN_SIZE + 1];
-byte len;
 
 void setup()
 {
