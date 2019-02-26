@@ -93,21 +93,13 @@ void update_beep_interval()
 {
   byte i;
   for (i = 0; i < ARRSIZE(beep_table); i++) {
-    if (h > beep_table[i].h) {
-      continue;
-    } else if (h < beep_table[i].h) {
-      break;
-    }
+    if (h > beep_table[i].h) continue;
+    if (h < beep_table[i].h) break;
 
-    if (m > beep_table[i].m) {
-      continue;
-    } else if (m < beep_table[i].m) {
-      break;
-    }
+    if (m > beep_table[i].m) continue;
+    if (m < beep_table[i].m) break;
 
-    if (s < beep_table[i].s) {
-      break;
-    }
+    if (s < beep_table[i].s) break;
   }
 
   beep_interval = i < ARRSIZE(beep_table)
