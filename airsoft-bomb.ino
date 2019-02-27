@@ -288,12 +288,12 @@ void loop()
 
   if (time - last_update >= 1000) {
     update_timer();
-    last_update = time;
+    last_update += 1000;
   }
 
   if (time - last_beep >= beep_interval) {
     speaker.play(TIMER_NOTE, beep_duration);
-    last_beep = time;
+    last_beep += beep_interval;
   }
 }
 
